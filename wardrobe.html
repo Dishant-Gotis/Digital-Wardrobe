@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Wardrobe | Selvora</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="theme-dark">
+  <header class="main-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 200px; position: relative;">
+    <nav class="main-nav">
+      <div class="logo-area">
+        <div class="logo">Selvora</div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="stylists.html">Stylists</a></li>
+        <li><a href="our-story.html">Our Story</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="gifting.html">Gifting</a></li>
+        <li><a href="report.html">Report</a></li>
+      </ul>
+    </nav>
+    <div class="header-hero">
+      <h2 class="hero-title">My <span class="hero-em">Digital Wardrobe</span></h2>
+    </div>
+    <div class="header-overlay"></div>
+  </header>
+
+  <div id="app" class="app-container">
+    <form id="add-form" class="add-form">
+      <div class="form-group">
+        <label for="type">Type</label>
+        <select id="type" class="form-input" required>
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+          <option value="shoe">Shoe</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="color">Color</label>
+        <input id="color" type="text" class="form-input" placeholder="e.g. pink" required />
+      </div>
+      <div class="form-group">
+        <label for="vibe">Vibe</label>
+        <input id="vibe" type="text" class="form-input" placeholder="e.g. casual" required />
+      </div>
+      <div class="form-group">
+        <label for="icon">Icon</label>
+        <select id="icon" class="form-input"></select>
+      </div>
+      <span class="or-divider">or</span>
+      <div class="form-group">
+        <label for="img">Upload Image</label>
+        <input id="img" type="file" class="form-input file-input" accept="image/*" />
+      </div>
+      <button type="submit" class="cta-btn">Add Item</button>
+    </form>
+    <div id="closet-grid" class="closet-grid"></div>
+    <div id="suggestion" class="suggestion"></div>
+    <button id="swipe-mode-btn" class="cta-btn" style="margin:2rem auto 0 auto;display:block;">Swipe Mode</button>
+    <div id="swipe-section" style="display:none;margin:2rem auto 0 auto;max-width:350px;">
+      <div id="swipe-card-container"></div>
+      <div style="display:flex;justify-content:center;gap:2rem;margin-top:1.5rem;">
+        <button id="swipe-left" class="cta-btn" style="background:#eee;color:#ff4fa3;">&#8592; Swipe Left</button>
+        <button id="swipe-right" class="cta-btn">Swipe Right &#8594;</button>
+      </div>
+      <div id="swipe-end-message" style="text-align:center;margin-top:2rem;font-family:'Dancing Script',cursive;font-size:1.3rem;color:#aaa;display:none;">No more items! 🎉</div>
+      <button id="exit-swipe" class="cta-btn" style="margin:2rem auto 0 auto;display:block;background:#eee;color:#ff4fa3;">Exit Swipe Mode</button>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Selvora. All rights reserved.
+  </footer>
+
+  <script src="closet-organiser.js"></script>
+</body>
+</html> 

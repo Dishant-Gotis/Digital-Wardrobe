@@ -19,7 +19,7 @@
 3. **Stylist Picks:** Get outfit suggestions and style tips based on your digital wardrobe.
 4. **Gifting Ideas:** Find inspiration for gifting or repurposing items you no longer wear.
 5. **Reports:** See stats about your closet—what you wear most, what you could donate, and more.
-6. **Theme Switcher:** Personalize the look and feel of your wardrobe app.
+
 
 ---
 

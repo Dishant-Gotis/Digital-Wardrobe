@@ -1,8 +1,4 @@
-
-
 // Closet Organizer App Logic
-
-
 const CLOSET_KEY = 'closet_items';
 const defaultIcons = [
   { type: 'top', icon: '👚' },
@@ -11,14 +7,20 @@ const defaultIcons = [
 ];
 
 
+
+
 function getCloset() {
   return JSON.parse(localStorage.getItem(CLOSET_KEY) || '[]');
 }
 
 
+
+
 function saveCloset(items) {
   localStorage.setItem(CLOSET_KEY, JSON.stringify(items));
 }
+
+
 
 
 function renderCloset() {
@@ -68,6 +70,8 @@ function renderCloset() {
 }
 
 
+
+
 function updateIconOptions() {
   const typeSelect = document.getElementById('type');
   const iconSelect = document.getElementById('icon');
@@ -85,6 +89,8 @@ function updateIconOptions() {
     iconSelect.appendChild(o);
   });
 }
+
+
 
 
 function handleAddItem(e) {
@@ -122,6 +128,8 @@ function handleAddItem(e) {
 }
 
 
+
+
 function addItem(item) {
   const closet = getCloset();
   closet.push(item);
@@ -130,6 +138,8 @@ function addItem(item) {
   document.getElementById('add-form').reset();
   updateIconOptions(); // Reset icon options after form reset
 }
+
+
 
 
 function suggestCombo() {
@@ -157,8 +167,12 @@ function suggestCombo() {
 }
 
 
+
+
 // Swipe Mode Logic
 let swipeIndex = 0;
+
+
 
 
 function showSwipeCard() {
@@ -190,6 +204,8 @@ function showSwipeCard() {
 }
 
 
+
+
 function enterSwipeMode() {
   document.getElementById('closet-grid').style.display = 'none';
   document.getElementById('suggestion').style.display = 'none';
@@ -200,12 +216,16 @@ function enterSwipeMode() {
 }
 
 
+
+
 function exitSwipeMode() {
   document.getElementById('closet-grid').style.display = '';
   document.getElementById('suggestion').style.display = '';
   document.getElementById('swipe-mode-btn').style.display = 'block';
   document.getElementById('swipe-section').style.display = 'none';
 }
+
+
 
 
 function swipeLeft() {
@@ -220,6 +240,8 @@ function swipeLeft() {
 }
 
 
+
+
 function swipeRight() {
   const closet = getCloset();
   if (swipeIndex < closet.length - 1) {
@@ -232,6 +254,8 @@ function swipeRight() {
     console.log('Reached end of items');
   }
 }
+
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -261,4 +285,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('swipe-left').onclick = swipeLeft;
   document.getElementById('swipe-right').onclick = swipeRight;
 });
+
+
+
+
 

@@ -1,3 +1,4 @@
+
 // Splash Screen Animation - Dark Background with Fade to Main Site
 document.addEventListener('DOMContentLoaded', function() {
   const splash = document.getElementById('splash-overlay');
@@ -12,12 +13,11 @@ document.addEventListener('DOMContentLoaded', function() {
   splash.style.background = '#181824';
   splash.style.zIndex = '9999';
 
-  // Loader animation with random characters for 4 seconds
-  function loaderAnimation(element, finalText, loaderDuration = 4000, holdTime = 1500) {
+  // Loader animation with slow character scramble and letter-by-letter reveal for 4 seconds
+  function loaderAnimation(element, finalText, totalDuration = 4000, holdTime = 1500) {
     const chars = '!<>-_\\/[]{}—=+*^?#________';
     const len = finalText.length;
     let startTime = Date.now();
-    let isLoaderPhase = true;
     
     function getRandomChar() {
       return chars[Math.floor(Math.random() * chars.length)];
@@ -25,43 +25,31 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function animate() {
       const elapsed = Date.now() - startTime;
-      
-      if (isLoaderPhase && elapsed < loaderDuration) {
-        // Loader phase: show random characters for 4 seconds
-        let randomText = '';
-        for (let i = 0; i < len; i++) {
-          randomText += getRandomChar();
-        }
-        element.textContent = randomText;
-        requestAnimationFrame(animate);
-      } else if (isLoaderPhase) {
-        // Loader phase complete, start reveal animation
-        isLoaderPhase = false;
-        startTime = Date.now();
-        revealAnimation();
-      }
-    }
-    
-    function revealAnimation() {
-      const elapsed = Date.now() - startTime;
-      const revealDuration = 1000; // 1 second to reveal the text
-      const progress = Math.min(1, elapsed / revealDuration);
-      const revealCount = Math.floor(progress * len);
-      
-      let displayText = '';
-      for (let i = 0; i < len; i++) {
-        if (i < revealCount) {
-          displayText += finalText[i];
-        } else {
-          displayText += getRandomChar();
-        }
-      }
-      
-      element.textContent = displayText;
+      const progress = Math.min(1, elapsed / totalDuration);
       
       if (progress < 1) {
-        requestAnimationFrame(revealAnimation);
+        // Calculate how many letters should be revealed based on progress
+        const lettersToReveal = Math.floor(progress * len);
+        
+        let displayText = '';
+        for (let i = 0; i < len; i++) {
+          if (i < lettersToReveal) {
+            // Show the actual letter
+            displayText += finalText[i];
+          } else {
+            // Show random character for remaining positions
+            displayText += getRandomChar();
+          }
+        }
+        
+        element.textContent = displayText;
+        
+        // Continue animation with slower frame rate for more dramatic effect
+        setTimeout(() => {
+          requestAnimationFrame(animate);
+        }, 150); // Slower update rate (150ms instead of immediate)
       } else {
+        // Animation complete, show final text
         element.textContent = finalText;
         setTimeout(() => {
           fadeToMainSite();
@@ -82,13 +70,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1500);
   }
   
-  // Start the loader animation
+  // Start the loader animation with 4-second duration
   loaderAnimation(scrambleText, 'SELVORA', 4000, 1500);
   
-  // Fallback: hide splash after 7 seconds if animation fails
+  // Fallback: hide splash after 6 seconds if animation fails
   setTimeout(() => {
     if (splash.style.display !== 'none') {
       fadeToMainSite();
     }
-  }, 7000);
-}); 
+  }, 6000);
+});

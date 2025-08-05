@@ -6,6 +6,11 @@
   <title>Closet Organizer | Gen-Z Fresh</title>
   <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <!-- Three.js library for 3D elements -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/OBJLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/MTLLoader.js"></script>
 </head>
 
 
@@ -16,6 +21,7 @@
 
 
   <header class="main-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 420px; position: relative;">
+    <video class="header-bg-video" src="images/header.mp4" autoplay loop muted playsinline style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;"></video>
     <nav class="main-nav">
       <div class="logo-area">
         <div class="logo">Selvora</div>
@@ -36,6 +42,18 @@
     <div class="header-overlay"></div>
   </header>
 
+
+  <section class="tshirt-hero-section" id="tshirt-section">
+    <div id="tshirt-3d-viewer"></div>
+    <div id="tshirt-shadow">
+      <svg width="100%" height="100%" viewBox="0 0 180 40"><ellipse cx="90" cy="20" rx="80" ry="16" fill="#000"/></svg>
+    </div>
+    <div class="section-title" id="tshirt-title">Visualise your Wardrobe</div>
+    <div class="loading-indicator" id="tshirt-loading-indicator">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading 3D T-shirt Model...</div>
+    </div>
+  </section>
 
   <section class="video-features">
     <div class="video-block">
@@ -59,6 +77,132 @@
 
 
   <script src="splash.js"></script>
+  <script src="scroll-reveal.js"></script>
+  <script>
+    // 3D T-shirt Model Viewer with scroll-based animation (igloo style)
+    const container = document.getElementById('tshirt-3d-viewer');
+    const loadingIndicator = document.getElementById('tshirt-loading-indicator');
+    const tshirtSection = document.getElementById('tshirt-section');
+    const tshirtTitle = document.getElementById('tshirt-title');
+    const tshirtShadow = document.getElementById('tshirt-shadow');
+    // Set up full viewport height and responsive canvas
+    function setSectionHeight() {
+      tshirtSection.style.minHeight = '100vh';
+      container.style.width = '100vw';
+      container.style.height = '100vh';
+    }
+    setSectionHeight();
+    window.addEventListener('resize', setSectionHeight);
+    let width = container.clientWidth;
+    let height = container.clientHeight;
+    // Scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x181828);
+    // Camera
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.set(0, 1.2, 3);
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+    // Lights
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+    hemiLight.position.set(0, 20, 0);
+    scene.add(hemiLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(3, 10, 10);
+    scene.add(dirLight);
+    // No controls for scroll-based animation
+    // Load OBJ + MTL
+    const objPath = 'images/tshirt/A_realistic_3D_model__0804221550_texture_obj/A_realistic_3D_model__0804221550_texture.obj';
+    const mtlPath = 'images/tshirt/A_realistic_3D_model__0804221550_texture_obj/A_realistic_3D_model__0804221550_texture.mtl';
+    let tshirtObject = null;
+    const mtlLoader = new THREE.MTLLoader();
+    mtlLoader.setPath('images/tshirt/A_realistic_3D_model__0804221550_texture_obj/');
+    mtlLoader.load('A_realistic_3D_model__0804221550_texture.mtl', function(materials) {
+      materials.preload();
+      const objLoader = new THREE.OBJLoader();
+      objLoader.setMaterials(materials);
+      objLoader.setPath('images/tshirt/A_realistic_3D_model__0804221550_texture_obj/');
+      objLoader.load('A_realistic_3D_model__0804221550_texture.obj', function(object) {
+        object.traverse(function(child) {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+            child.material.transparent = true;
+            child.material.opacity = 0;
+          }
+        });
+        object.scale.set(1, 1, 1);
+        object.position.y = 1;
+        scene.add(object);
+        tshirtObject = object;
+        // Animate fade-in
+        let animFrame = 0;
+        const totalFrames = 60;
+        function animateIn() {
+          animFrame++;
+          const t = Math.min(animFrame / totalFrames, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          object.traverse(function(child) {
+            if (child.isMesh) child.material.opacity = ease;
+          });
+          if (t < 1) requestAnimationFrame(animateIn);
+        }
+        animateIn();
+        if (tshirtSection) setTimeout(() => { tshirtSection.style.opacity = 1; }, 200);
+        if (loadingIndicator) loadingIndicator.style.display = 'none';
+      });
+    });
+    // Responsive
+    window.addEventListener('resize', () => {
+      width = container.clientWidth;
+      height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    });
+    // Scroll-based animation
+    function getScrollProgress() {
+      const rect = tshirtSection.getBoundingClientRect();
+      const windowH = window.innerHeight;
+      // 0 when top of section at bottom of viewport, 1 when bottom of section at top
+      let progress = 1 - (rect.bottom / (windowH + rect.height));
+      return Math.max(0, Math.min(1, progress));
+    }
+    // Animate
+    function animate() {
+      requestAnimationFrame(animate);
+      if (tshirtObject) {
+        const scroll = getScrollProgress();
+        // Scale from 1.15 to 0.6 for more drama
+        const scale = 1.15 - 0.55 * scroll;
+        tshirtObject.scale.set(scale, scale, scale);
+        // Y position floats up as you scroll, more parallax
+        tshirtObject.position.y = 1 + 0.32 * (1 - scroll) + Math.sin(Date.now() * 0.001) * 0.09 * (1 - scroll);
+        // Rotate Y and X for more 3D effect
+        tshirtObject.rotation.y = Math.PI * 0.1 + scroll * Math.PI * 0.9;
+        tshirtObject.rotation.x = -0.08 + scroll * 0.35;
+        // Fade out as you scroll away (faster)
+        tshirtObject.traverse(function(child) {
+          if (child.isMesh) child.material.opacity = Math.max(0, 1 - scroll * 2.2);
+        });
+        // Shadow opacity and parallax
+        if (tshirtShadow) {
+          tshirtShadow.style.opacity = String(0.32 * (1 - scroll * 1.2));
+          tshirtShadow.style.transform = `translateX(-50%) scale(${1 - scroll * 0.25}) translateY(${scroll * 40}px)`;
+        }
+        // Title fade and move (more dramatic)
+        if (tshirtTitle) {
+          tshirtTitle.style.opacity = String(1 - scroll * 2.5);
+          tshirtTitle.style.transform = `translateY(${scroll * -120}px) scale(${1 - scroll * 0.2})`;
+        }
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+  </script>
 </body>
 </html>
 
